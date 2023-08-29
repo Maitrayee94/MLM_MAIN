@@ -30,10 +30,10 @@ const StakingTable = (props) => {
           // Fetch the number of stakes made by the user
           const userStakeCount = await contract.userCount(account);
           const userCountDecimal = parseInt(userStakeCount, 16);
-           // console.log(userCountDecimal);
+          // console.log(userCountDecimal);
           // Fetch and process staking details for each stake
           const stakingDetails = [];
-          for (let index = 101; index <= 100+userCountDecimal; index++) {
+          for (let index = 101; index <= 100 + userCountDecimal; index++) {
             const user = await contract.users(account, index);
 
             // Process the data and create an object
@@ -41,12 +41,14 @@ const StakingTable = (props) => {
             console.log(stakedAmount);
             const stakingEndTimeInSeconds = user.stakingEndTime.toNumber();
             const currentBlockTime = Math.floor(Date.now() / 1000);
-           
-const endDateTime = new Date(stakingEndTimeInSeconds * 1000); // Convert to milliseconds
-const endDate = endDateTime.toLocaleString(); 
+
+            const endDateTime = new Date(stakingEndTimeInSeconds * 1000); // Convert to milliseconds
+            const endDate = endDateTime.toLocaleString();
             const remainingDays = Math.max(
               0,
-              Math.floor((stakingEndTimeInSeconds - currentBlockTime) / (60 * 60 * 24))
+              Math.floor(
+                (stakingEndTimeInSeconds - currentBlockTime) / (60 * 60 * 24)
+              )
             );
             const plan = user.plan.toString(); // Convert to string
 
@@ -78,48 +80,97 @@ const endDate = endDateTime.toLocaleString();
   }, [account]);
 
   return (
-    <div className="relative overflow-x-auto m-4 w-full bg-[#17181A]">
-      <div className="text-sm sm:text-base block bg-[#17181A] rounded-lg text-white w-full p-3 ">
-        <p className="p-2 inline-block">Your Staking Details</p>
+    <div>
+      <div className="relative overflow-x-auto m-4 w-full bg-[#17181A]">
+        <div className="text-sm sm:text-base block bg-[#17181A] rounded-lg text-white w-full p-3 ">
+          <p className="p-2 inline-block">Your Staking Details</p>
+        </div>
+        <table className="w-full text-sm text-left text-gray-500">
+          <thead className="text-sm sm:text-base bg-[#1D2B26] rounded-lg text-white">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Staked Amount
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Days Left
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Parent Id
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Total rewards
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Date & Time
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((data, index) => (
+              <tr
+                key={index}
+                className="bg-[#1E1E1F] border-t border-[#444242] text-white"
+              >
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium whitespace-nowrap"
+                >
+                  {index + 1}
+                </th>
+                <td className="px-6 py-4">{data.stakedAmount}</td>
+                <td className="px-6 py-4">{data.daysLeft}</td>
+                <td className="px-6 py-4">{data.endDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-      <table className="w-full text-sm text-left text-gray-500">
-        <thead className="text-sm sm:text-base bg-[#1D2B26] rounded-lg text-white">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              ID
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Staked Amount
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Days Left
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Date & Time
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-        {tableData.map((data, index) => (
-  <tr
-    key={index}
-    className="bg-[#1E1E1F] border-t border-[#444242] text-white"
-  >
-    <th
-      scope="row"
-      className="px-6 py-4 font-medium whitespace-nowrap"
-    >
-      {index + 1}
-    </th>
-    <td className="px-6 py-4">{data.stakedAmount}</td>
-    <td className="px-6 py-4">{data.daysLeft}</td>
-    <td className="px-6 py-4">{data.endDate}</td>
-  </tr>
-))}
-</tbody>
-      </table>
-      <div>
-        <p>Plan Count: {planCount}</p>
+      <div className="relative overflow-x-auto m-4 w-full bg-[#17181A]">
+        <div className="text-sm sm:text-base block bg-[#17181A] rounded-lg text-white w-full p-3 ">
+          <p className="p-2 inline-block">Your Purchase Details</p>
+        </div>
+        <table className="w-full text-sm text-left text-gray-500">
+          <thead className="text-sm sm:text-base bg-[#1D2B26] rounded-lg text-white">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Purchase Amount
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Parent Id
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Tier
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Date & Time
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {tableData.map((data, index) => (
+              <tr
+                key={index}
+                className="bg-[#1E1E1F] border-t border-[#444242] text-white"
+              >
+                <th
+                  scope="row"
+                  className="px-6 py-4 font-medium whitespace-nowrap"
+                >
+                  {index + 1}
+                </th>
+                <td className="px-6 py-4">{data.stakedAmount}</td>
+                <td className="px-6 py-4">{data.daysLeft}</td>
+                <td className="px-6 py-4">{data.endDate}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
