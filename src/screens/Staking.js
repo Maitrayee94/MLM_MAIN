@@ -36,7 +36,12 @@ const Staking = (props) => {
       const userStakeCount = await contract.userCount(account);
       const StakeCount = parseInt(userStakeCount, 16);
 
-      const tx = await contract.stakeTokens(amount, teamSize, StakeCount);
+      const tx = await contract.stakeTokens(
+        amount,
+        teamSize,
+        StakeCount,
+        StakeCount + 100
+      );
       // wait for the transaction to get mined
       await tx.wait();
       if (tx == "false") {
@@ -144,6 +149,17 @@ const Staking = (props) => {
                 id="size"
                 type="text"
                 value={"10"}
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block  text-sm font-bold mb-2" for="username">
+                Id
+              </label>
+              <input
+                class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
+                id="id"
+                type="text"
+                value={"101"}
               />
             </div>
           </div>

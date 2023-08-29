@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import StakingTable from "../components/StakingTable";
 import { useMetaMask } from "../hooks/useMetamask";
 import { ethers } from "ethers";
 import {
@@ -16,6 +15,7 @@ const Dashboard = () => {
   const [account, setAccount] = useState("");
   const [tokenBalance, setTokenBalance] = useState(0);
   const [stakeBalance, setStakeBalance] = useState(0);
+  const [purchasedBalance, setPurchaseBalance] = useState(0);
   const [plan, setPlan] = useState("");
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const Dashboard = () => {
             STAKING_ABI,
             signer
           );
-          //console.log(contract.address);
+          console.log(contract);
           const stake_balance = await contract.totalStaked();
 
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
@@ -148,7 +148,7 @@ const Dashboard = () => {
           <div className="flex flex-col">
             <h1 className="text-base">Regular wallet</h1>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{tokenBalance} Tokens</span>
+              <span className="font-semibold">{purchasedBalance} </span>
             </h1>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-2">
@@ -203,7 +203,7 @@ const Dashboard = () => {
               <h1 className="ml-4 text-base">Total MJC Tokens</h1>
             </div>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">35000 MJC</span>
+              <span className="font-semibold">{tokenBalance}</span>
             </h1>
           </div>
           <div className="dcard text-white mt-2 md:max-w-md w-full md:p-6 p-4 rounded-xl flex justify-between items-center">

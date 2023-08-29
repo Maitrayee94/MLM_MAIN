@@ -26,11 +26,10 @@ const StakingTable = (props) => {
             STAKING_ABI,
             signer
           );
-
           // Fetch the number of stakes made by the user
           const userStakeCount = await contract.userCount(account);
           const userCountDecimal = parseInt(userStakeCount, 16);
-          // console.log(userCountDecimal);
+          console.log(userCountDecimal);
           // Fetch and process staking details for each stake
           const stakingDetails = [];
           for (let index = 101; index <= 100 + userCountDecimal; index++) {
