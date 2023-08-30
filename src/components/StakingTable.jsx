@@ -28,11 +28,12 @@ const StakingTable = (props) => {
             signer
           );
           // Fetch the number of stakes made by the user
+          
           const parent = await contract.getParent(account);
           //console.log(parent);
           const userStakeCount = await contract.userCount(account);
           const userCountDecimal = parseInt(userStakeCount, 16);
-          console.log(userCountDecimal);
+          
           // Fetch and process staking details for each stake
           const stakingDetails = [];
           for (let index = 101; index <= 100 + userCountDecimal; index++) {
@@ -40,25 +41,29 @@ const StakingTable = (props) => {
 
             // Process the data and create an object
             const stakedAmount = ethers.utils.formatEther(user.stakedAmount); // Convert to ETH
-            console.log(stakedAmount);
+            //console.log(stakedAmount);
             const stakingEndTimeInSeconds = user.stakingEndTime.toNumber();
+            //console.log(stakingEndTimeInSeconds);
             const currentBlockTime = Math.floor(Date.now() / 1000);
-
+            //console.log(currentBlockTime);
             const endDateTime = new Date(stakingEndTimeInSeconds * 1000); // Convert to milliseconds
+            //console.log(endDateTime);
             const endDate = endDateTime.toLocaleString();
-
+            //console.log(endDate);
             const StartDate = user.StartDate.toNumber();
-
+            
             const StartDateTime = new Date(StartDate * 1000)
-
+            //console.log(StartDateTime);
             const startdate = StartDateTime.toLocaleString();
+            console.log(startdate);
             const remainingDays = Math.max(
               0,
               Math.floor(
                 (stakingEndTimeInSeconds - currentBlockTime) / (60 * 60 * 24)
               )
             );
-            const plan = user.plan.toString(); // Convert to string
+            console.log(remainingDays);
+            
 
             // Create an object with the data
             const rowData = {
@@ -67,11 +72,13 @@ const StakingTable = (props) => {
               daysLeft: remainingDays,
               endDate,
               parent,
+              startdate,
             };
 
             // Add the staking details to the array
             stakingDetails.push(rowData);
           }
+          console.log(stakingDetails)
 
           // Update the tableData array with the new data
           setTableData(stakingDetails);
@@ -110,9 +117,7 @@ const StakingTable = (props) => {
               <th scope="col" className="px-6 py-3">
                 Parent Id
               </th>
-              <th scope="col" className="px-6 py-3">
-                Total rewards
-              </th>
+              
               <th scope="col" className="px-6 py-3">
                 Date & Time
               </th>
@@ -130,12 +135,11 @@ const StakingTable = (props) => {
                 >
                   {index + 1}
                 </th>
-                <td className="px-6 py-4">{tableData.stakedAmount}</td>
-                <td className="px-6 py-4">{tableData.daysLeft}</td>
-                <td className="px-6 py-4">{tableData.endDate}</td>
-                <td className="px-6 py-4">{tableData.stakedAmount}</td>
-                <td className="px-6 py-4">{tableData.daysLeft}</td>
-                <td className="px-6 py-4">{tableData.endDate}</td>
+                <td className="px-6 py-4">{data.stakedAmount}</td>
+                <td className="px-6 py-4">{data.daysLeft}</td>
+                <td className="px-6 py-4">{data.parent}</td>
+                
+                <td className="px-6 py-4">{data.startdate}</td>
               </tr>
             ))}
           </tbody>

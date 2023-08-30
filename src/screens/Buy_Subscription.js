@@ -14,7 +14,9 @@ const Buy_Subscription = (props) => {
   const [duration, setDuration] = useState(0);
   const [teamsize, setTeamsize] = useState(0);
   const [address, setAddress] = useState("");
-  const [buyAmount, setBuyAmount] = useState(0);
+  const [buyAmount, setBuyAmount] = useState(0);  
+const [directAmount,setDirectAmount] =useState(0);
+const [directAddress,setDirectAddress] = useState('')
   const [tier, setTier] = useState(0);
   const fees = 10;
 
@@ -27,41 +29,7 @@ const Buy_Subscription = (props) => {
     }
   }, [wallet]);
 
-  const stakingToken = async (event) => {
-    event.preventDefault();
-    try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
-        STAKING_CONTRACT_ADDRESS,
-        STAKING_ABI,
-        signer
-      );
-      //const TT_Token_contract = new ethers.Contract(CUSTOM_TOKEN_ADDRESS, CUSTOM_TOKEN_ABI, signer);
-      //onsole.log(contract.address);
-      const userStakeCount = await contract.userCount(account);
-      const StakeCount = parseInt(userStakeCount, 16);
-      console.log(amount, duration, teamsize);
-      console.log(StakeCount);
-      const tx = await contract.stakeTokens(
-        amount,
-        duration,
-        teamsize,
-        StakeCount + 101
-      );
-      // wait for the transaction to get mined
-      await tx.wait();
-      if (tx == "false") {
-        window.alert("Staking Failed");
-      }
-      window.alert("You are Successfully Staked Your token");
-      //console.log(tx);
-      //setHash(tx.hash);
-      console.log(tx.hash);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  
   const buyToken = async (event) => {
     event.preventDefault();
     try {
@@ -72,10 +40,19 @@ const Buy_Subscription = (props) => {
         STAKING_ABI,
         signer
       );
-
+        if(tier == 50){
+          setAmount(50);
+          
+        }
+        else if(tier == 100){
+          setAmount(100);
+        }
+        else{
+          setAmount(500);
+        }
       const tx = await contract.buyTokens(
         address,
-        buyAmount - fees,
+        amount,
         tier,
         fees
       );
@@ -93,6 +70,37 @@ const Buy_Subscription = (props) => {
       console.error(error);
     }
   };
+  const directStaking = async (event) => {
+    event.preventDefault();
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        STAKING_CONTRACT_ADDRESS,
+        STAKING_ABI,
+        signer
+      );
+        
+      const tx = await contract.DirectStakeJoining(
+        directAddress,
+        directAmount,
+        
+      );
+      console.log(tx);
+      // wait for the transaction to get mined
+      await tx.wait();
+      if (tx == "false") {
+        window.alert("Stake Joining Failed");
+      }
+      window.alert("You successfully Joined");
+      //console.log(tx);
+      //setHash(tx.hash);
+      console.log(tx.hash);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   return (
     <div className="flex flex-col mt-7 items-start dashboard ">
@@ -246,10 +254,23 @@ const Buy_Subscription = (props) => {
                 <input
                   class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                   id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                    value={directAddress}
+                    onChange={(e) => setDirectAddress(e.target.value)}
+                  
                   type="text"
                 />
+                 <div class="mt-4 mb-4">
+              <label class="block  text-sm font-bold mb-2" for="username">
+                Enter amount
+              </label>
+              <input
+                class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
+                id="amount"
+                value={directAmount}
+                onChange={(e) => setDirectAmount(e.target.value)}
+                type="number"
+              />
+            </div>
               </div>
             </div>
             <div className="bg-[#31A16A] p-3 gap-4 flex  items-center justify-center rounded-md ">
@@ -265,7 +286,7 @@ const Buy_Subscription = (props) => {
                   fill="white"
                 />
               </svg>{" "}
-              <p onClick={buyToken}> Direct Stake</p>
+              <p onClick={directStaking}> Direct Stake</p>
             </div>
           </div>
         </div>

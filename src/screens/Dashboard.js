@@ -21,6 +21,12 @@ const Dashboard = ({ setOpenTab }) => {
   const green = 0;
 
   useEffect(() => {
+    if (wallet && wallet.accounts && wallet.accounts.length > 0) {
+      setAccount(wallet.accounts[0]);
+    }
+  }, [wallet]);
+
+  useEffect(() => {
     const getWalletBalance = async () => {
       if (account) {
         try {
@@ -31,7 +37,7 @@ const Dashboard = ({ setOpenTab }) => {
             CUSTOM_TOKEN_ABI,
             signer
           );
-
+            console.log(contract.address);
           const balance = await contract.balanceOf(account);
           const balanceInEth = ethers.utils.formatEther(balance); // Convert to ethers
           const decBalance = parseFloat(balanceInEth).toFixed(2);
@@ -61,20 +67,21 @@ const Dashboard = ({ setOpenTab }) => {
           const subscriptionDetail = await contract.userSubscription(account);
           const allreferral = await contract.showAllParent(account);
 
-          for (var i = 0; i < allreferral.length; i++) {
-            if (
-              allreferral[i] !== "0x0000000000000000000000000000000000000000"
-            ) {
-              green++;
-            }
-          }
-          const stakeAmount = subscriptionDetail.tokenAmount;
-          setPurchaseBalance(stakeAmount.toNumber());
+          // for (var i = 0; i < allreferral.length; i++) {
+          //   if (
+          //     allreferral[i] !== "0x0000000000000000000000000000000000000000"
+          //   ) {
+          //     green++;
+          //   }
+          // }
+          // const stakeAmount = subscriptionDetail.tokenAmount;
+          // setPurchaseBalance(stakeAmount.toNumber());
           
-          const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
-          const stake_decBalance = parseFloat(stake_balanceInEth).toFixed(2);
-
-          setStakeBalance(stake_decBalance / 1000000000000000000);
+          const stake_balanceInEth = ethers.utils.formatEther(stake_balance);
+           console.log(stake_balanceInEth); // Convert to ethers
+          const stake_decBalance = (parseFloat(stake_balanceInEth)/ 1000000000000000000).toFixed(2);
+          // console.log(stake_decBalance);
+          setStakeBalance(stake_decBalance );
         } catch (error) {
           console.error("Error fetching token balance:", error);
         }
