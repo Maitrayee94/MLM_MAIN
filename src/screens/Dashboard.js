@@ -16,7 +16,9 @@ const Dashboard = () => {
   const [tokenBalance, setTokenBalance] = useState(0);
   const [stakeBalance, setStakeBalance] = useState(0);
   const [purchasedBalance, setPurchaseBalance] = useState(0);
+  const [parent, setParent] = useState(0);
   const [plan, setPlan] = useState("");
+  const green = 0;
 
   useEffect(() => {
     if (wallet && wallet.accounts && wallet.accounts.length > 0) {
@@ -62,6 +64,18 @@ const Dashboard = () => {
           );
           console.log(contract);
           const stake_balance = await contract.totalStaked();
+          const subscriptionDetail = await contract.userSubscription(account);
+          const allreferral = await contract.showAllParent(account);
+          console.log(allreferral);
+          for (var i = 0; i < allreferral.length; i++) {
+            if (
+              allreferral[i] !== "0x0000000000000000000000000000000000000000"
+            ) {
+              green++;
+            }
+          }
+          const stakeAmount = subscriptionDetail.tokenAmount;
+          setPurchaseBalance(stakeAmount.toNumber());
 
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
           const stake_decBalance = Number(stake_balanceInEth).toFixed(2);
@@ -240,8 +254,11 @@ const Dashboard = () => {
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-            {[...Array(10)].map((e, i) => (
+            {[...Array(green)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
+            ))}
+            {[...Array(10 - green)].map((e, i) => (
+              <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
         </div>

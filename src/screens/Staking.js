@@ -10,9 +10,15 @@ import {
 } from "./constant/index.js";
 
 const Staking = (props) => {
-  const teamSize = 0;
+  const [amount, setAmount] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [teamsize, setTeamsize] = useState(0);
+  const [address, setAddress] = useState("");
+  const [buyAmount, setBuyAmount] = useState(0);
+  const [tier, setTier] = useState(0);
+  const fees = 10;
+
   const { wallet } = useMetaMask();
-  const amount = 30000;
   const [account, setAccount] = useState("");
 
   useEffect(() => {
@@ -35,12 +41,13 @@ const Staking = (props) => {
       //onsole.log(contract.address);
       const userStakeCount = await contract.userCount(account);
       const StakeCount = parseInt(userStakeCount, 16);
-
+      console.log(amount, duration, teamsize);
+      console.log(StakeCount);
       const tx = await contract.stakeTokens(
         amount,
-        teamSize,
-        StakeCount,
-        StakeCount + 100
+        duration,
+        teamsize,
+        StakeCount + 101
       );
       // wait for the transaction to get mined
       await tx.wait();
@@ -48,6 +55,37 @@ const Staking = (props) => {
         window.alert("Staking Failed");
       }
       window.alert("You are Successfully Staked Your token");
+      //console.log(tx);
+      //setHash(tx.hash);
+      console.log(tx.hash);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const buyToken = async (event) => {
+    event.preventDefault();
+    try {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        STAKING_CONTRACT_ADDRESS,
+        STAKING_ABI,
+        signer
+      );
+
+      const tx = await contract.buyTokens(
+        address,
+        buyAmount - fees,
+        tier,
+        fees
+      );
+      console.log(tx);
+      // wait for the transaction to get mined
+      await tx.wait();
+      if (tx == "false") {
+        window.alert("Buy Failed");
+      }
+      window.alert("You successfully subscribed to MJC token");
       //console.log(tx);
       //setHash(tx.hash);
       console.log(tx.hash);
@@ -125,8 +163,9 @@ const Staking = (props) => {
               <input
                 class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                 id="amount"
-                value={"10000"}
-                type="text"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                type="number"
               />
             </div>
             <div class="mb-4">
@@ -136,8 +175,9 @@ const Staking = (props) => {
               <input
                 class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                 id="duration"
-                value={"180 Days"}
-                type="text"
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                type="number"
               />
             </div>
             <div class="mb-4">
@@ -147,19 +187,9 @@ const Staking = (props) => {
               <input
                 class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                 id="size"
-                type="text"
-                value={"10"}
-              />
-            </div>
-            <div class="mb-4">
-              <label class="block  text-sm font-bold mb-2" for="username">
-                Id
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
-                id="id"
-                type="text"
-                value={"101"}
+                type="number"
+                value={teamsize}
+                onChange={(e) => setTeamsize(e.target.value)}
               />
             </div>
           </div>
@@ -208,8 +238,9 @@ const Staking = (props) => {
               <input
                 class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
                 id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
                 type="text"
-                value={"0x43Ee1...3A0F78E08C6b8aB15"}
               />
             </div>
           </div>
@@ -219,9 +250,10 @@ const Staking = (props) => {
             </label>
             <input
               class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
-              id="amount"
-              value={"10000"}
-              type="text"
+              id="buyAmount"
+              value={buyAmount}
+              onChange={(e) => setBuyAmount(e.target.value)}
+              type="number"
             />
           </div>
           <div class="w-full">
@@ -235,10 +267,13 @@ const Staking = (props) => {
               <select
                 class="block appearance-none w-full  bg-transparent border border-[#505352]  py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-[#222223] focus:border-gray-500"
                 id="grid-state"
+                value={tier}
+                onChange={(e) => setTier(e.target.value)}
+                type="number"
               >
-                <option>50$</option>
-                <option>100$</option>
-                <option>500$</option>
+                <option>50</option>
+                <option>100</option>
+                <option>500</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ">
                 <svg
@@ -265,7 +300,7 @@ const Staking = (props) => {
                 fill="white"
               />
             </svg>{" "}
-            <p onClick={stakingToken}> Purchase tokens</p>
+            <p onClick={buyToken}> Purchase tokens</p>
           </div>
         </div>
       </div>
