@@ -63,10 +63,10 @@ const Dashboard = () => {
             signer
           );
           console.log(contract);
-          const stake_balance = await contract.totalStaked();
+          const stake_balance = await contract.TotalTokenStaked(account);
           const subscriptionDetail = await contract.userSubscription(account);
           const allreferral = await contract.showAllParent(account);
-          console.log(allreferral);
+          
           for (var i = 0; i < allreferral.length; i++) {
             if (
               allreferral[i] !== "0x0000000000000000000000000000000000000000"
@@ -76,10 +76,11 @@ const Dashboard = () => {
           }
           const stakeAmount = subscriptionDetail.tokenAmount;
           setPurchaseBalance(stakeAmount.toNumber());
-
+          
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
-          const stake_decBalance = Number(stake_balanceInEth).toFixed(2);
-          setStakeBalance(stake_balanceInEth / 1000000000000000000);
+          const stake_decBalance = parseFloat(stake_balanceInEth).toFixed(2);
+          
+          setStakeBalance(stake_decBalance / 1000000000000000000);
         } catch (error) {
           console.error("Error fetching token balance:", error);
         }
@@ -162,7 +163,7 @@ const Dashboard = () => {
           <div className="flex flex-col">
             <h1 className="text-base">Regular wallet</h1>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{purchasedBalance} </span>
+              <span className="font-semibold">{tokenBalance} </span>
             </h1>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-2">
@@ -217,7 +218,7 @@ const Dashboard = () => {
               <h1 className="ml-4 text-base">Total MJC Tokens</h1>
             </div>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{tokenBalance}</span>
+              <span className="font-semibold">{}</span>
             </h1>
           </div>
           <div className="dcard text-white mt-2 md:max-w-md w-full md:p-6 p-4 rounded-xl flex justify-between items-center">

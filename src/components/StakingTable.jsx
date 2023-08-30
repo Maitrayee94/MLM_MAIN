@@ -8,6 +8,7 @@ const StakingTable = (props) => {
   const [account, setAccount] = useState("");
   const [tableData, setTableData] = useState([]);
   const [planCount, setPlanCount] = useState(0);
+  const [parent, setParent] = useState("");
 
   useEffect(() => {
     if (wallet && wallet.accounts && wallet.accounts.length > 0) {
@@ -27,6 +28,8 @@ const StakingTable = (props) => {
             signer
           );
           // Fetch the number of stakes made by the user
+          const parent = await contract.getParent(account);
+          //console.log(parent);
           const userStakeCount = await contract.userCount(account);
           const userCountDecimal = parseInt(userStakeCount, 16);
           console.log(userCountDecimal);
@@ -43,6 +46,10 @@ const StakingTable = (props) => {
 
             const endDateTime = new Date(stakingEndTimeInSeconds * 1000); // Convert to milliseconds
             const endDate = endDateTime.toLocaleString();
+
+            const StartDate = user.StartDate.toNumber();
+            const StartDateTime = new Date(StartDate * 1000)
+            const startdate = StartDateTime.toLocaleString();
             const remainingDays = Math.max(
               0,
               Math.floor(
@@ -57,6 +64,7 @@ const StakingTable = (props) => {
               stakedAmount,
               daysLeft: remainingDays,
               endDate,
+              parent,
             };
 
             // Add the staking details to the array
@@ -65,6 +73,7 @@ const StakingTable = (props) => {
 
           // Update the tableData array with the new data
           setTableData(stakingDetails);
+          console.log(tableData);
 
           // Count unique plans
           const uniquePlans = new Set(stakingDetails.map((data) => data.plan));
@@ -119,9 +128,12 @@ const StakingTable = (props) => {
                 >
                   {index + 1}
                 </th>
-                <td className="px-6 py-4">{data.stakedAmount}</td>
-                <td className="px-6 py-4">{data.daysLeft}</td>
-                <td className="px-6 py-4">{data.endDate}</td>
+                <td className="px-6 py-4">{tableData.stakedAmount}</td>
+                <td className="px-6 py-4">{tableData.daysLeft}</td>
+                <td className="px-6 py-4">{tableData.endDate}</td>
+                <td className="px-6 py-4">{tableData.stakedAmount}</td>
+                <td className="px-6 py-4">{tableData.daysLeft}</td>
+                <td className="px-6 py-4">{tableData.endDate}</td>
               </tr>
             ))}
           </tbody>
