@@ -48,7 +48,9 @@ const StakingTable = (props) => {
             const endDate = endDateTime.toLocaleString();
 
             const StartDate = user.StartDate.toNumber();
+
             const StartDateTime = new Date(StartDate * 1000)
+
             const startdate = StartDateTime.toLocaleString();
             const remainingDays = Math.max(
               0,

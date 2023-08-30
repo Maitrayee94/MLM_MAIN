@@ -4,6 +4,7 @@ import Dashboard from "./Dashboard";
 import Staking from "./Staking";
 import { useMetaMask } from "../hooks/useMetamask";
 import StakingTable from "../components/StakingTable";
+import Buy_Subscription from "./Buy_Subscription";
 const Layout_Dashboard = () => {
   const [openTab, setOpenTab] = React.useState(1);
   const { wallet, hasProvider, isConnecting, connectMetaMask } = useMetaMask();
@@ -27,9 +28,11 @@ const Layout_Dashboard = () => {
       </div>
       <DashboardNavbar setOpenTab={setOpenTab} />
       {openTab === 1 ? (
-        <Dashboard />
+        <Dashboard setOpenTab={setOpenTab} />
       ) : openTab == 2 ? (
         <Staking wallet={wallet} />
+      ) : openTab == 3 ? (
+        <Buy_Subscription wallet={wallet} />
       ) : (
         <StakingTable />
       )}
