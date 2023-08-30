@@ -70,7 +70,7 @@ const Dashboard = ({ setOpenTab }) => {
           }
           const stakeAmount = subscriptionDetail.tokenAmount;
           setPurchaseBalance(stakeAmount.toNumber());
-
+          
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
           const stake_decBalance = parseFloat(stake_balanceInEth).toFixed(2);
 
