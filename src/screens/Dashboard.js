@@ -10,7 +10,7 @@ import {
 import GreenFilled from "../assets/green_ball.svg";
 import WhiteFilled from "../assets/white_ball.svg";
 
-const Dashboard = () => {
+const Dashboard = ({ setOpenTab }) => {
   const { wallet } = useMetaMask();
   const [account, setAccount] = useState("");
   const [tokenBalance, setTokenBalance] = useState(0);
@@ -19,12 +19,6 @@ const Dashboard = () => {
   const [parent, setParent] = useState(0);
   const [plan, setPlan] = useState("");
   const green = 0;
-
-  useEffect(() => {
-    if (wallet && wallet.accounts && wallet.accounts.length > 0) {
-      setAccount(wallet.accounts[0]);
-    }
-  }, [wallet]);
 
   useEffect(() => {
     const getWalletBalance = async () => {
@@ -63,10 +57,10 @@ const Dashboard = () => {
             signer
           );
           console.log(contract);
-          const stake_balance = await contract.totalStaked();
+          const stake_balance = await contract.TotalTokenStaked(account);
           const subscriptionDetail = await contract.userSubscription(account);
           const allreferral = await contract.showAllParent(account);
-          console.log(allreferral);
+
           for (var i = 0; i < allreferral.length; i++) {
             if (
               allreferral[i] !== "0x0000000000000000000000000000000000000000"
@@ -78,8 +72,9 @@ const Dashboard = () => {
           setPurchaseBalance(stakeAmount.toNumber());
 
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance); // Convert to ethers
-          const stake_decBalance = Number(stake_balanceInEth).toFixed(2);
-          setStakeBalance(stake_balanceInEth / 1000000000000000000);
+          const stake_decBalance = parseFloat(stake_balanceInEth).toFixed(2);
+
+          setStakeBalance(stake_decBalance / 1000000000000000000);
         } catch (error) {
           console.error("Error fetching token balance:", error);
         }
@@ -129,21 +124,6 @@ const Dashboard = () => {
             <div className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="12"
-                height="17"
-                viewBox="0 0 12 17"
-                fill="none"
-              >
-                <path
-                  d="M10 10.75V8.75H11.61C11.85 9.46 12 10.14 12 10.75H10ZM9.58 4.75C9.12 4.04 8.65 3.36 8.2 2.75H8V4.75H9.58ZM10 8.75V6.75H8V8.75H10ZM10 5.43V6.75H10.74C10.5 6.31 10.26 5.86 10 5.43ZM6 12.75V10.75H8V8.75H6V6.75H8V4.75H6V2.75H8V2.48C6.9 1.01 6 0 6 0C6 0 0 6.75 0 10.75C0 14.06 2.69 16.75 6 16.75V14.75H8V12.75H6ZM8 16.4C8.75 16.14 9.42 15.75 10 15.21V14.75H8V16.4ZM8 12.75H10V10.75H8V12.75ZM10 14.75H10.46C11 14.17 11.39 13.5 11.65 12.75H10V14.75Z"
-                  fill="white"
-                />
-              </svg>{" "}
-              <p>Stake</p>
-            </div>
-            <div className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
                 width="18"
                 height="14"
                 viewBox="0 0 18 14"
@@ -154,7 +134,25 @@ const Dashboard = () => {
                   fill="white"
                 />
               </svg>{" "}
-              <p>Withdraw</p>
+              <p>Unstake</p>
+            </div>
+            <div
+              className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center"
+              onClick={() => setOpenTab(4)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="17"
+                viewBox="0 0 12 17"
+                fill="none"
+              >
+                <path
+                  d="M10 10.75V8.75H11.61C11.85 9.46 12 10.14 12 10.75H10ZM9.58 4.75C9.12 4.04 8.65 3.36 8.2 2.75H8V4.75H9.58ZM10 8.75V6.75H8V8.75H10ZM10 5.43V6.75H10.74C10.5 6.31 10.26 5.86 10 5.43ZM6 12.75V10.75H8V8.75H6V6.75H8V4.75H6V2.75H8V2.48C6.9 1.01 6 0 6 0C6 0 0 6.75 0 10.75C0 14.06 2.69 16.75 6 16.75V14.75H8V12.75H6ZM8 16.4C8.75 16.14 9.42 15.75 10 15.21V14.75H8V16.4ZM8 12.75H10V10.75H8V12.75ZM10 14.75H10.46C11 14.17 11.39 13.5 11.65 12.75H10V14.75Z"
+                  fill="white"
+                />
+              </svg>{" "}
+              <p>Stake Transaction</p>
             </div>
           </div>
         </div>
@@ -162,11 +160,11 @@ const Dashboard = () => {
           <div className="flex flex-col">
             <h1 className="text-base">Regular wallet</h1>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{purchasedBalance} </span>
+              <span className="font-semibold">{tokenBalance} </span>
             </h1>
           </div>
-          <div className="grid grid-cols-2 gap-4 mt-2">
-            <div className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center">
+          <div className="flex justify-center ">
+            <div className="connect-wallet cursor-pointer p-3 w-1/2 flex gap-4 items-center justify-center rounded-lg text-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -179,22 +177,7 @@ const Dashboard = () => {
                   fill="white"
                 />
               </svg>{" "}
-              <p>Stake</p>
-            </div>
-            <div className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="18"
-                height="14"
-                viewBox="0 0 18 14"
-                fill="none"
-              >
-                <path
-                  d="M18 4L14 0V3H7V5H14V8M4 6L0 10L4 14V11H11V9H4V6Z"
-                  fill="white"
-                />
-              </svg>{" "}
-              <p>Withdraw</p>
+              <p>Join</p>
             </div>
           </div>
         </div>
@@ -214,10 +197,10 @@ const Dashboard = () => {
                 />
               </svg>
 
-              <h1 className="ml-4 text-base">Total MJC Tokens</h1>
+              <h1 className="ml-4 text-base">Total Earning rewards</h1>
             </div>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{tokenBalance}</span>
+              <span className="font-semibold">{}</span>
             </h1>
           </div>
           <div className="dcard text-white mt-2 md:max-w-md w-full md:p-6 p-4 rounded-xl flex justify-between items-center">
@@ -235,7 +218,7 @@ const Dashboard = () => {
                 />
               </svg>
 
-              <h1 className="text-base ml-4">Total Staked MJC</h1>
+              <h1 className="text-base ml-4">Team Size</h1>
             </div>
 
             <h1 className="text-2xl md:text-2xl my-2">
@@ -246,7 +229,7 @@ const Dashboard = () => {
       </div>
       <h1 className="text-white mt-9 mb-8">Your Levels</h1>
       <div className="grid gap-4 md:grid-cols-4  w-full">
-        <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
+        <div className="dcard text-yellow-300 md:max-w-md w-full md:p-6 p-4 rounded-xl">
           <div className="flex justify-between items-center">
             <h1 className="text-base">50$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
@@ -262,11 +245,11 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
+        <div className="dcard text-red md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
             <h1 className="text-base">100$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className="font-semibold">Levellocked </span>
+              <span className="font-semibold text-red-600">Levellocked </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -275,11 +258,11 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
+        <div className="dcard text-red md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
             <h1 className="text-base">200$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className="font-semibold">Levellocked </span>
+              <span className="font-semibold text-red-600">Levellocked </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -288,11 +271,11 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
+        <div className="dcard  md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
             <h1 className="text-base">500$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className="font-semibold">Levellocked </span>
+              <span className="font-semibold text-red-600">Levellocked </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -301,11 +284,11 @@ const Dashboard = () => {
             ))}
           </div>
         </div>
-        <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
+        <div className="dcard  md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
             <h1 className="text-base">1000$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className="font-semibold">Levellocked </span>
+              <span className="font-semibold text-red-600">Levellocked </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
