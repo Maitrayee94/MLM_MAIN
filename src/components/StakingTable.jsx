@@ -9,6 +9,9 @@ const StakingTable = (props) => {
   const [tableData, setTableData] = useState([]);
   const [planCount, setPlanCount] = useState(0);
   const [parent, setParent] = useState("");
+  const [sub_amount, setSubAmount] = useState(0)
+  const [tier, setTier] = useState();
+
 
   useEffect(() => {
     if (wallet && wallet.accounts && wallet.accounts.length > 0) {
@@ -33,7 +36,12 @@ const StakingTable = (props) => {
           //console.log(parent);
           const userStakeCount = await contract.userCount(account);
           const userCountDecimal = parseInt(userStakeCount, 16);
-          
+          const user_sub = await contract.userSubscription(account);
+          //setUserSub(user_sub);
+          setParent(user_sub.parent);
+          setSubAmount(user_sub.tokenAmount.toNumber());
+          setTier(user_sub.tier.toNumber());
+          console.log(user_sub);
           // Fetch and process staking details for each stake
           const stakingDetails = [];
           for (let index = 101; index <= 100 + userCountDecimal; index++) {
@@ -164,9 +172,7 @@ const StakingTable = (props) => {
               <th scope="col" className="px-6 py-3">
                 Tier
               </th>
-              <th scope="col" className="px-6 py-3">
-                Date & Time
-              </th>
+    
             </tr>
           </thead>
           <tbody>
@@ -181,9 +187,10 @@ const StakingTable = (props) => {
                 >
                   {index + 1}
                 </th>
-                <td className="px-6 py-4">{data.stakedAmount}</td>
-                <td className="px-6 py-4">{data.daysLeft}</td>
-                <td className="px-6 py-4">{data.endDate}</td>
+                <td className="px-6 py-4">{sub_amount}</td>
+<td className="px-6 py-4">{parent}</td>
+<td className="px-6 py-4">{tier}</td>
+
               </tr>
             ))}
           </tbody>

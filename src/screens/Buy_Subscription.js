@@ -19,6 +19,7 @@ const [directAmount,setDirectAmount] =useState(0);
 const [directAddress,setDirectAddress] = useState('')
   const [tier, setTier] = useState(0);
   const fees = 10;
+  const [approve_amount, setApproveAmount] = useState(0);
 
   const { wallet } = useMetaMask();
   const [account, setAccount] = useState("");
@@ -100,6 +101,37 @@ const [directAddress,setDirectAddress] = useState('')
       console.error(error);
     }
   };
+  const approve = async (event) => {
+    event.preventDefault();
+    try {
+      setApproveAmount(event.target.value);
+      //console.log(approve_amount);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const Staking_contract = new ethers.Contract(
+        STAKING_CONTRACT_ADDRESS,
+        STAKING_ABI,
+        signer
+      );
+      const Token_contract = new ethers.Contract(
+        CUSTOM_TOKEN_ADDRESS,
+        CUSTOM_TOKEN_ABI,
+        signer
+      );
+      const tx = await Token_contract.approve(Staking_contract.address, approve_amount);
+      console.log(tx);
+      // wait for the transaction to get mined
+      await tx.wait();
+      if (tx == "false") {
+        window.alert("Approved Failed");
+      }
+      window.alert("Your tokens are approved successfully");
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
 
   return (
@@ -131,7 +163,8 @@ const [directAddress,setDirectAddress] = useState('')
             <input
               class=" mr-10 shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
               id="amount"
-              value={"10000"}
+              value={approve_amount}
+              onChange={approve}
               type="text"
             ></input>
             <button className="bg-[#31A16A] p-3 gap-4 flex items-center justify-center rounded-md">
@@ -194,7 +227,9 @@ const [directAddress,setDirectAddress] = useState('')
               >
                 <option>50</option>
                 <option>100</option>
+                <option>200</option>
                 <option>500</option>
+                <option>1000</option>
               </select>
               <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ">
                 <svg
