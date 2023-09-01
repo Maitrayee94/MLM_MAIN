@@ -10,7 +10,7 @@ import {
 } from "./constant/index.js";
 
 const Buy_Subscription = (props) => {
-  const [amount, setAmount] = useState(0);
+ 
   const [duration, setDuration] = useState(0);
   const [teamsize, setTeamsize] = useState(0);
   const [address, setAddress] = useState("");
@@ -41,23 +41,31 @@ const [directAddress,setDirectAddress] = useState('')
         STAKING_ABI,
         signer
       );
+      var amount = 0;
         if(tier == 50){
-          setAmount(50);
+          amount = 50;
           
         }
         else if(tier == 100){
-          setAmount(100);
+          amount = 100;
+        }
+        else if(tier == 200){
+          amount = 200;
+        }
+        else if(tier == 500){
+          amount = 500;
         }
         else{
-          setAmount(500);
+          amount = 1000;
         }
+        console.log(amount);
       const tx = await contract.buyTokens(
         address,
         amount,
         tier,
         fees
       );
-      console.log(tx);
+     console.log(tx);
       // wait for the transaction to get mined
       await tx.wait();
       if (tx == "false") {
@@ -101,7 +109,11 @@ const [directAddress,setDirectAddress] = useState('')
       console.error(error);
     }
   };
-  const approve = async (event) => {
+  const approve = (e) => {
+    e.preventDefault();
+    setApproveAmount(e.target.value);
+  };
+  const approveButton = async (event) => {
     event.preventDefault();
     try {
       setApproveAmount(event.target.value);
@@ -119,7 +131,10 @@ const [directAddress,setDirectAddress] = useState('')
         CUSTOM_TOKEN_ABI,
         signer
       );
-      const tx = await Token_contract.approve(Staking_contract.address, approve_amount);
+      const tx = await Token_contract.approve(
+        Staking_contract.address,
+        approve_amount
+      );
       console.log(tx);
       // wait for the transaction to get mined
       await tx.wait();
@@ -127,7 +142,6 @@ const [directAddress,setDirectAddress] = useState('')
         window.alert("Approved Failed");
       }
       window.alert("Your tokens are approved successfully");
-
     } catch (error) {
       console.error(error);
     }
@@ -167,7 +181,10 @@ const [directAddress,setDirectAddress] = useState('')
               onChange={approve}
               type="text"
             ></input>
-            <button className="bg-[#31A16A] p-3 gap-4 flex items-center justify-center rounded-md">
+            <button
+              className="bg-[#31A16A] p-3 gap-4 flex items-center justify-center rounded-md"
+              onClick={approveButton}
+            >
               Approve
             </button>
           </div>
@@ -243,7 +260,7 @@ const [directAddress,setDirectAddress] = useState('')
             </div>
           </div>
 
-          <div className="bg-[#31A16A] p-3 gap-4 flex  items-center justify-center rounded-md">
+          <div className="bg-[#31A16A] p-3 gap-4 cursor-pointer flex  items-center justify-center rounded-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="12"
@@ -308,7 +325,7 @@ const [directAddress,setDirectAddress] = useState('')
             </div>
               </div>
             </div>
-            <div className="bg-[#31A16A] p-3 gap-4 flex  items-center justify-center rounded-md ">
+            <div className="bg-[#31A16A] p-3 gap-4 flex  cursor-pointer items-center justify-center rounded-md">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"

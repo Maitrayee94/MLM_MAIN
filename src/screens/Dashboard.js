@@ -20,6 +20,7 @@ const Dashboard = ({ setOpenTab }) => {
   const [plan, setPlan] = useState("");
   const [tier, setTier] =useState(0);
   const [green,setGreen] = useState(0);
+  const [rewards, setRewards] = useState(0);
 
   useEffect(() => {
     if (wallet && wallet.accounts && wallet.accounts.length > 0) {
@@ -38,7 +39,7 @@ const Dashboard = ({ setOpenTab }) => {
             CUSTOM_TOKEN_ABI,
             signer
           );
-            console.log(contract.address);
+            
           const balance = await contract.balanceOf(account);
           const balanceInEth = ethers.utils.formatEther(balance); // Convert to ethers
           const decBalance = parseFloat(balanceInEth).toFixed(2);
@@ -63,28 +64,34 @@ const Dashboard = ({ setOpenTab }) => {
             STAKING_ABI,
             signer
           );
-          console.log(contract);
+          //console.log(contract);
           const stake_balance = await contract.TotalTokenStaked(account);
+          const user_rewards = await contract.userRewards(account);
+console.log(user_rewards.toString()); // Log the 
+setRewards((user_rewards / 1000000000000000000).toString())
           const subscriptionDetail = await contract.userSubscription(account);
           var allreferral = await contract.showAllParent(account);
-            console.log(allreferral);
+           console.log(allreferral);
           const user_tier = subscriptionDetail.tier;
           setTier(user_tier);
-          console.log(user_tier.toNumber());
+          //console.log(user_tier.toNumber());
           var g=0;
           for (var i = 0; i < allreferral.length; i++) {
-            if (allreferral[i] != "0x0000000000000000000000000000000000000000") {
-              g++;
+           if (allreferral[i] != "0x0000000000000000000000000000000000000000") {
+              g++
               }
+           
            }
+
+           console.log(g);
            setGreen(g);
-          // const stakeAmount = subscriptionDetail.tokenAmount;
-          // setPurchaseBalance(stakeAmount.toNumber());
+          const stakeAmount = subscriptionDetail.tokenAmount;
+          setPurchaseBalance(stakeAmount.toNumber());
           //console.log(plan);
-          console.log(green);
+          //console.log(green);
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance);
-           //console.log(stake_balanceInEth); // Convert to ethers
-          const stake_decBalance = (parseFloat(stake_balanceInEth)/ 1000000000000000000).toFixed(2);
+          //  //console.log(stake_balanceInEth); // Convert to ethers
+         const stake_decBalance = (parseFloat(stake_balanceInEth)/ 1000000000000000000).toFixed(2);
           // console.log(stake_decBalance);
           setStakeBalance(stake_decBalance );
         } catch (error) {
@@ -133,7 +140,10 @@ const Dashboard = ({ setOpenTab }) => {
             </h1>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-2">
-            <div className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center">
+          <div
+              className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center"
+              onClick={() => setOpenTab(2)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="18"
@@ -146,7 +156,7 @@ const Dashboard = ({ setOpenTab }) => {
                   fill="white"
                 />
               </svg>{" "}
-              <p>Unstake</p>
+              <p>Stake</p>
             </div>
             <div
               className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center"
@@ -175,8 +185,11 @@ const Dashboard = ({ setOpenTab }) => {
               <span className="font-semibold">{tokenBalance} </span>
             </h1>
           </div>
-          <div className="flex justify-center ">
-            <div className="connect-wallet cursor-pointer p-3 w-1/2 flex gap-4 items-center justify-center rounded-lg text-center">
+          <div className="flex justify-center mt-2">
+          <div
+              className="connect-wallet cursor-pointer p-3 w-1/2 flex gap-4 items-center justify-center rounded-lg text-center"
+              onClick={() => setOpenTab(3)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="12"
@@ -212,7 +225,7 @@ const Dashboard = ({ setOpenTab }) => {
               <h1 className="ml-4 text-base">Total Earning rewards</h1>
             </div>
             <h1 className="text-2xl md:text-2xl my-2">
-              <span className="font-semibold">{}</span>
+              <span className="font-semibold">{rewards}</span>
             </h1>
           </div>
           <div className="dcard text-white mt-2 md:max-w-md w-full md:p-6 p-4 rounded-xl flex justify-between items-center">
@@ -245,7 +258,11 @@ const Dashboard = ({ setOpenTab }) => {
           <div className="flex justify-between items-center">
             <h1 className={`text-base ${tier==50?"text-yellow-600":"text-white"}`}>50$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==50?"text-yellow-600":"text-red-600"}`}>{(tier==50?"Levelreached":"LevelLocked")}</span>
+              <span className={`font-semibold ${tier==50?"text-yellow-600":"text-red-600"}`}>{tier == 50
+                  ? green == 10
+                    ? "Levelreached"
+                    : "LevelUnlocked"
+                  : "LevelLocked"}</span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -261,7 +278,11 @@ const Dashboard = ({ setOpenTab }) => {
           <div className="flex justify-between items-center">
             <h1 className={`text-base ${tier==100?"text-yellow-600":"text-white"}`}>100$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==100?"text-yellow-600":"text-red-600"}`}>{(tier==100?"Levelreached":"LevelLocked")}</span>
+              <span className={`font-semibold ${tier==100?"text-yellow-600":"text-red-600"}`}>{tier == 100
+                  ? green == 10
+                    ? "Levelreached"
+                    : "LevelUnlocked"
+                  : "LevelLocked"}</span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -277,7 +298,11 @@ const Dashboard = ({ setOpenTab }) => {
           <div className="flex justify-between items-center">
             <h1 className={`text-base ${tier==200?"text-yellow-600":"text-white"}`}>200$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==200?"text-yellow-600":"text-red-600"}`}>{(tier==200?"Levelreached":"LevelLocked")}</span>
+              <span className={`font-semibold ${tier==200?"text-yellow-600":"text-red-600"}`}>{tier == 200
+                  ? green == 10
+                    ? "Levelreached"
+                    : "LevelUnlocked"
+                  : "LevelLocked"}</span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -293,7 +318,11 @@ const Dashboard = ({ setOpenTab }) => {
           <div className="flex justify-between items-center">
             <h1 className={`text-base ${tier==500?"text-yellow-600":"text-white"}`}>500$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==500?"text-yellow-600":"text-red-600"}`}>{(tier==500?"Levelreached":"LevelLocked")}</span>
+              <span className={`font-semibold ${tier==500?"text-yellow-600":"text-red-600"}`}>{tier == 500
+                  ? green == 10
+                    ? "Levelreached"
+                    : "LevelUnlocked"
+                  : "LevelLocked"}</span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
@@ -309,7 +338,11 @@ const Dashboard = ({ setOpenTab }) => {
           <div className="flex justify-between items-center">
             <h1 className={`text-base ${tier==1000?"text-yellow-600":"text-white"}`}>1000$</h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==1000?"text-yellow-600":"text-red-600"}`}>{(tier==1000?"Levelreached":"LevelLocked")}</span>
+              <span className={`font-semibold ${tier==1000?"text-yellow-600":"text-red-600"}`}> {tier == 1000
+                  ? green == 10
+                    ? "Levelreached"
+                    : "LevelUnlocked"
+                  : "LevelLocked"}</span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">

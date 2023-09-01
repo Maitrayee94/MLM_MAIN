@@ -1,5 +1,5 @@
 export const STAKING_CONTRACT_ADDRESS =
-  "0x9e2271C5c0Bb6f4566d193788debF8CCF3E24b57";
+  "0x65E79e75A90fd7cFA28D351387de20d6009568fF";
 export const STAKING_ABI = [
   {
     "inputs": [
@@ -244,19 +244,6 @@ export const STAKING_ABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "_referral",
-        "type": "address"
-      }
-    ],
-    "name": "addReferral",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
         "name": "_referrer",
         "type": "address"
       },
@@ -474,6 +461,25 @@ export const STAKING_ABI = [
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      }
+    ],
+    "name": "totalRewardsReceived",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "totalStaked",
     "outputs": [
@@ -512,6 +518,25 @@ export const STAKING_ABI = [
       {
         "internalType": "uint256",
         "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userRewards",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "totalrewards",
         "type": "uint256"
       }
     ],

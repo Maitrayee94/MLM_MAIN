@@ -168,18 +168,28 @@ const Staking = (props) => {
                 type="number"
               />
             </div>
-            <div class="mb-4">
-              <label class="block  text-sm font-bold mb-2" for="username">
-                Duration
-              </label>
-              <input
-                class="shadow appearance-none border rounded w-full border-[#505352] p-3 bg-transparent leading-tight focus:outline-none focus:shadow-outline"
-                id="duration"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-                type="number"
-              />
-            </div>
+            <div class="relative">
+                <select
+                  class="block appearance-none w-full  bg-transparent border border-[#505352]  py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-[#222223] focus:border-gray-500"
+                  id="duration"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                  type="number"
+                >
+                  <option>90</option>
+                  <option>180</option>
+                  <option>360</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ">
+                  <svg
+                    class="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                  </svg>
+                </div>
+              </div>
             <div class="mb-4">
               <label class="block  text-sm font-bold mb-2" for="username">
                 Team Size
@@ -193,7 +203,7 @@ const Staking = (props) => {
               />
             </div>
           </div>
-          <div className="bg-[#31A16A] p-3 gap-4 flex items-center justify-center rounded-md">
+          <div className="bg-[#31A16A] p-3 gap-4 cursor-pointer flex items-center justify-center rounded-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="12"
