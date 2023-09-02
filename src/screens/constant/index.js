@@ -1,5 +1,5 @@
 export const STAKING_CONTRACT_ADDRESS =
-  "0x65E79e75A90fd7cFA28D351387de20d6009568fF";
+  "0x8EA318f0C4c172d414bE09f88bD72ce51CaB72a3";
 export const STAKING_ABI = [
   {
     "inputs": [
@@ -384,6 +384,25 @@ export const STAKING_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "showAllChild",
+    "outputs": [
+      {
+        "internalType": "address[]",
+        "name": "",
+        "type": "address[]"
       }
     ],
     "stateMutability": "view",

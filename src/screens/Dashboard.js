@@ -70,16 +70,15 @@ const Dashboard = ({ setOpenTab }) => {
 console.log(user_rewards.toString()); // Log the 
 setRewards((user_rewards / 1000000000000000000).toString())
           const subscriptionDetail = await contract.userSubscription(account);
-          var allreferral = await contract.showAllParent(account);
+          var allreferral = await contract.showAllChild(account);
            console.log(allreferral);
           const user_tier = subscriptionDetail.tier;
           setTier(user_tier);
           //console.log(user_tier.toNumber());
           var g=0;
           for (var i = 0; i < allreferral.length; i++) {
-           if (allreferral[i] != "0x0000000000000000000000000000000000000000") {
+          
               g++
-              }
            
            }
 
