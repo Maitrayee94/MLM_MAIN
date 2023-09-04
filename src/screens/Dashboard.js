@@ -9,6 +9,8 @@ import {
 } from "./constant/index.js";
 import GreenFilled from "../assets/green_ball.svg";
 import WhiteFilled from "../assets/white_ball.svg";
+import { FcLock } from "react-icons/fc";
+import { FcApproval } from "react-icons/fc";
 
 const Dashboard = ({ setOpenTab }) => {
   const { wallet } = useMetaMask();
@@ -18,9 +20,10 @@ const Dashboard = ({ setOpenTab }) => {
   const [purchasedBalance, setPurchaseBalance] = useState(0);
   const [parent, setParent] = useState(0);
   const [plan, setPlan] = useState("");
-  const [tier, setTier] =useState(0);
-  const [green,setGreen] = useState(0);
+  const [tier, setTier] = useState(0);
+  const [green, setGreen] = useState(0);
   const [rewards, setRewards] = useState(0);
+  const [referAddress, setReferAddress] = useState("");
 
   useEffect(() => {
     if (wallet && wallet.accounts && wallet.accounts.length > 0) {
@@ -39,7 +42,7 @@ const Dashboard = ({ setOpenTab }) => {
             CUSTOM_TOKEN_ABI,
             signer
           );
-            
+
           const balance = await contract.balanceOf(account);
           const balanceInEth = ethers.utils.formatEther(balance); // Convert to ethers
           const decBalance = parseFloat(balanceInEth).toFixed(2);
@@ -67,32 +70,32 @@ const Dashboard = ({ setOpenTab }) => {
           //console.log(contract);
           const stake_balance = await contract.TotalTokenStaked(account);
           const user_rewards = await contract.userRewards(account);
-console.log(user_rewards.toString()); // Log the 
-setRewards((user_rewards / 1000000000000000000).toString())
+          console.log(user_rewards.toString()); // Log the
+          setRewards((user_rewards / 1000000000000000000).toString());
           const subscriptionDetail = await contract.userSubscription(account);
           var allreferral = await contract.showAllChild(account);
-           console.log(allreferral);
+          console.log(allreferral);
           const user_tier = subscriptionDetail.tier;
           setTier(user_tier);
           //console.log(user_tier.toNumber());
-          var g=0;
+          var g = 0;
           for (var i = 0; i < allreferral.length; i++) {
-          
-              g++
-           
-           }
+            g++;
+          }
 
-           console.log(g);
-           setGreen(g);
+          console.log(g);
+          setGreen(g);
           const stakeAmount = subscriptionDetail.tokenAmount;
           setPurchaseBalance(stakeAmount.toNumber());
           //console.log(plan);
           //console.log(green);
           const stake_balanceInEth = ethers.utils.formatEther(stake_balance);
           //  //console.log(stake_balanceInEth); // Convert to ethers
-         const stake_decBalance = (parseFloat(stake_balanceInEth)/ 1000000000000000000).toFixed(2);
+          const stake_decBalance = (
+            parseFloat(stake_balanceInEth) / 1000000000000000000
+          ).toFixed(2);
           // console.log(stake_decBalance);
-          setStakeBalance(stake_decBalance );
+          setStakeBalance(stake_decBalance);
         } catch (error) {
           console.error("Error fetching token balance:", error);
         }
@@ -128,8 +131,24 @@ setRewards((user_rewards / 1000000000000000000).toString())
     getPlan(); // Call the function when the component mounts or when the account changes
   }, [account]);
 
+  const ref = (e) => {
+    e.preventDefault();
+    setReferAddress(`https://mjc.com/${account}`);
+  };
+
   return (
     <div className="flex w-full justify-center  p-10 md:px-20  md:pb-20 flex-col h-full dashboard">
+      <div className="flex w-1/2 m-auto mb-3">
+        <div className="block appearance-none w-full md:w-2/5 bg-transparent border border-[#505352]  py-3 px-4 pr-8 rounded  focus:outline-none focus:bg-[#222223] focus:border-gray-500">
+          <span className="text-white">{`https://mjc.com/${account.slice(
+            0,
+            6
+          )}...${account.slice(-4)}`}</span>
+        </div>
+        <div className="connect-wallet md:ml-3 cursor-pointer flex  w-1/5 items-center justify-center rounded-lg text-center text-white">
+          <p onClick={ref}> Copy</p>
+        </div>
+      </div>
       <div className="grid gap-4 md:grid-cols-3  w-full">
         <div className="dcard text-white md:max-w-md w-full md:p-6 p-4 rounded-xl">
           <div className="flex flex-col">
@@ -139,7 +158,7 @@ setRewards((user_rewards / 1000000000000000000).toString())
             </h1>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-2">
-          <div
+            <div
               className="connect-wallet cursor-pointer p-3 flex gap-4 items-center justify-center rounded-lg text-center"
               onClick={() => setOpenTab(2)}
             >
@@ -185,7 +204,7 @@ setRewards((user_rewards / 1000000000000000000).toString())
             </h1>
           </div>
           <div className="flex justify-center mt-2">
-          <div
+            <div
               className="connect-wallet cursor-pointer p-3 w-1/2 flex gap-4 items-center justify-center rounded-lg text-center"
               onClick={() => setOpenTab(3)}
             >
@@ -255,100 +274,236 @@ setRewards((user_rewards / 1000000000000000000).toString())
       <div className="grid gap-4 md:grid-cols-4  w-full">
         <div className="dcard text-yellow-300 md:max-w-md w-full md:p-6 p-4 rounded-xl">
           <div className="flex justify-between items-center">
-            <h1 className={`text-base ${tier==50?"text-yellow-600":"text-white"}`}>50$</h1>
+            <h1
+              className={`text-base ${
+                tier == 50 ? "text-yellow-600" : "text-white"
+              }`}
+            >
+              50$
+            </h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==50?"text-yellow-600":"text-red-600"}`}>{tier == 50
-                  ? green == 10
-                    ? "Levelreached"
-                    : "LevelUnlocked"
-                  : "LevelLocked"}</span>
+              <span
+                className={`font-semibold ${
+                  tier == 50 ? "text-yellow-600" : "text-red-600"
+                }`}
+              >
+                {tier == 50 ? (
+                  green == 10 ? (
+                    <FcApproval />
+                  ) : (
+                    <svg
+                      width="18"
+                      height="22"
+                      viewBox="0 0 18 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 16L3 12L4.41 10.59L7 13.17L13.59 6.58L15 8M9 0L0 4V10C0 15.55 3.84 20.74 9 22C14.16 20.74 18 15.55 18 10V4L9 0Z"
+                        fill="#E0F850"
+                      />
+                    </svg>
+                  )
+                ) : (
+                  <FcLock />
+                )}
+              </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-            {[...Array(tier==50?green:0)].map((e, i) => (
+            {[...Array(tier == 50 ? green : 0)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
             ))}
-            {[...Array(tier==50?(10 - green):10)].map((e, i) => (
+            {[...Array(tier == 50 ? 10 - green : 10)].map((e, i) => (
               <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
         </div>
         <div className="dcard text-red md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
-            <h1 className={`text-base ${tier==100?"text-yellow-600":"text-white"}`}>100$</h1>
+            <h1
+              className={`text-base ${
+                tier == 100 ? "text-yellow-600" : "text-white"
+              }`}
+            >
+              100$
+            </h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==100?"text-yellow-600":"text-red-600"}`}>{tier == 100
-                  ? green == 10
-                    ? "Levelreached"
-                    : "LevelUnlocked"
-                  : "LevelLocked"}</span>
+              <span
+                className={`font-semibold ${
+                  tier == 100 ? "text-yellow-600" : "text-red-600"
+                }`}
+              >
+                {tier == 100 ? (
+                  green == 10 ? (
+                    <FcApproval />
+                  ) : (
+                    <svg
+                      width="18"
+                      height="22"
+                      viewBox="0 0 18 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 16L3 12L4.41 10.59L7 13.17L13.59 6.58L15 8M9 0L0 4V10C0 15.55 3.84 20.74 9 22C14.16 20.74 18 15.55 18 10V4L9 0Z"
+                        fill="#E0F850"
+                      />
+                    </svg>
+                  )
+                ) : (
+                  <FcLock />
+                )}
+              </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-          {[...Array(tier==100?green:0)].map((e, i) => (
+            {[...Array(tier == 100 ? green : 0)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
             ))}
-            {[...Array(tier==100?(10 - green):10)].map((e, i) => (
+            {[...Array(tier == 100 ? 10 - green : 10)].map((e, i) => (
               <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
         </div>
         <div className="dcard text-red md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
-            <h1 className={`text-base ${tier==200?"text-yellow-600":"text-white"}`}>200$</h1>
+            <h1
+              className={`text-base ${
+                tier == 200 ? "text-yellow-600" : "text-white"
+              }`}
+            >
+              200$
+            </h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==200?"text-yellow-600":"text-red-600"}`}>{tier == 200
-                  ? green == 10
-                    ? "Levelreached"
-                    : "LevelUnlocked"
-                  : "LevelLocked"}</span>
+              <span
+                className={`font-semibold ${
+                  tier == 200 ? "text-yellow-600" : "text-red-600"
+                }`}
+              >
+                {tier == 200 ? (
+                  green == 10 ? (
+                    <FcApproval />
+                  ) : (
+                    <svg
+                      width="18"
+                      height="22"
+                      viewBox="0 0 18 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 16L3 12L4.41 10.59L7 13.17L13.59 6.58L15 8M9 0L0 4V10C0 15.55 3.84 20.74 9 22C14.16 20.74 18 15.55 18 10V4L9 0Z"
+                        fill="#E0F850"
+                      />
+                    </svg>
+                  )
+                ) : (
+                  <FcLock />
+                )}
+              </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-          {[...Array(tier==200?green:0)].map((e, i) => (
+            {[...Array(tier == 200 ? green : 0)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
             ))}
-            {[...Array(tier==200?(10 - green):10)].map((e, i) => (
+            {[...Array(tier == 200 ? 10 - green : 10)].map((e, i) => (
               <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
         </div>
         <div className="dcard  md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
-            <h1 className={`text-base ${tier==500?"text-yellow-600":"text-white"}`}>500$</h1>
+            <h1
+              className={`text-base ${
+                tier == 500 ? "text-yellow-600" : "text-white"
+              }`}
+            >
+              500$
+            </h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==500?"text-yellow-600":"text-red-600"}`}>{tier == 500
-                  ? green == 10
-                    ? "Levelreached"
-                    : "LevelUnlocked"
-                  : "LevelLocked"}</span>
+              <span
+                className={`font-semibold ${
+                  tier == 500 ? "text-yellow-600" : "text-red-600"
+                }`}
+              >
+                {tier == 500 ? (
+                  green == 10 ? (
+                    <FcApproval />
+                  ) : (
+                    <svg
+                      width="18"
+                      height="22"
+                      viewBox="0 0 18 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 16L3 12L4.41 10.59L7 13.17L13.59 6.58L15 8M9 0L0 4V10C0 15.55 3.84 20.74 9 22C14.16 20.74 18 15.55 18 10V4L9 0Z"
+                        fill="#E0F850"
+                      />
+                    </svg>
+                  )
+                ) : (
+                  <FcLock />
+                )}
+              </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-          {[...Array(tier==500?green:0)].map((e, i) => (
+            {[...Array(tier == 500 ? green : 0)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
             ))}
-            {[...Array(tier==500?(10 - green):10)].map((e, i) => (
+            {[...Array(tier == 500 ? 10 - green : 10)].map((e, i) => (
               <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
         </div>
         <div className="dcard  md:max-w-md w-full md:p-6 p-4 rounded-xl text-white">
           <div className="flex justify-between items-center">
-            <h1 className={`text-base ${tier==1000?"text-yellow-600":"text-white"}`}>1000$</h1>
+            <h1
+              className={`text-base ${
+                tier == 1000 ? "text-yellow-600" : "text-white"
+              }`}
+            >
+              1000$
+            </h1>
             <h1 className="text-2xl md:text-2xl gap-2 flex  items-center">
-              <span className={`font-semibold ${tier==1000?"text-yellow-600":"text-red-600"}`}> {tier == 1000
-                  ? green == 10
-                    ? "Levelreached"
-                    : "LevelUnlocked"
-                  : "LevelLocked"}</span>
+              <span
+                className={`font-semibold ${
+                  tier == 1000 ? "text-yellow-600" : "text-red-600"
+                }`}
+              >
+                {" "}
+                {tier == 1000 ? (
+                  green == 10 ? (
+                    <FcApproval />
+                  ) : (
+                    <svg
+                      width="18"
+                      height="22"
+                      viewBox="0 0 18 22"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M7 16L3 12L4.41 10.59L7 13.17L13.59 6.58L15 8M9 0L0 4V10C0 15.55 3.84 20.74 9 22C14.16 20.74 18 15.55 18 10V4L9 0Z"
+                        fill="#E0F850"
+                      />
+                    </svg>
+                  )
+                ) : (
+                  <FcLock />
+                )}
+              </span>
             </h1>
           </div>
           <div className="grid grid-cols-5 gap-4 mt-2">
-          {[...Array(tier==1000?green:0)].map((e, i) => (
+            {[...Array(tier == 1000 ? green : 0)].map((e, i) => (
               <img src={GreenFilled} alt="green"></img>
             ))}
-            {[...Array(tier==1000?(10 - green):10)].map((e, i) => (
+            {[...Array(tier == 1000 ? 10 - green : 10)].map((e, i) => (
               <img src={WhiteFilled} alt="white"></img>
             ))}
           </div>
