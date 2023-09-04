@@ -9,12 +9,12 @@ import {
   CUSTOM_TOKEN_ABI,
 } from "./constant/index.js";
 
+
+
 const Buy_Subscription = (props) => {
  
-  const [duration, setDuration] = useState(0);
   const [teamsize, setTeamsize] = useState(0);
-  const [address, setAddress] = useState("");
-  const [buyAmount, setBuyAmount] = useState(0);  
+  const [address, setAddress] = useState("");  
 const [directAmount,setDirectAmount] =useState(0);
 const [directAddress,setDirectAddress] = useState('')
   const [tier, setTier] = useState(0);
@@ -41,27 +41,33 @@ const [directAddress,setDirectAddress] = useState('')
         STAKING_ABI,
         signer
       );
-      var amount = 0;
+      var buy_amount = 0;
+      var stake_amount =0;
         if(tier == 50){
-          amount = 50;
+          buy_amount = 42.5;
+          stake_amount = 7.5;
           
         }
         else if(tier == 100){
-          amount = 100;
+          buy_amount = 85;
+          stake_amount = 15;
         }
         else if(tier == 200){
-          amount = 200;
+          buy_amount = 170;
+          stake_amount = 30;
         }
         else if(tier == 500){
-          amount = 500;
+          buy_amount = 425;
+          stake_amount = 75;
         }
         else{
-          amount = 1000;
+          buy_amount = 850;
+          stake_amount = 150;
         }
-        console.log(amount);
+        //console.log(amount);
       const tx = await contract.buyTokens(
         address,
-        amount,
+        buy_amount,
         tier,
         fees
       );
@@ -72,6 +78,25 @@ const [directAddress,setDirectAddress] = useState('')
         window.alert("Buy Failed");
       }
       window.alert("You successfully subscribed to MJC token");
+      //console.log(tx);
+      //setHash(tx.hash);
+
+    const userStakeCount = await contract.userCount(account);
+      const StakeCount = parseInt(userStakeCount, 16);
+      //console.log(amount, duration, teamsize);
+      //console.log(StakeCount);
+      const Staking_tx = await contract.stakeTokens(
+        stake_amount,
+        180,
+        0,
+        StakeCount + 101
+      );
+      // wait for the transaction to get mined
+      await Staking_tx.wait();
+      if (Staking_tx == "false") {
+        window.alert("Staking Failed");
+      }
+      window.alert("You are Successfully Staked Your token");
       //console.log(tx);
       //setHash(tx.hash);
       console.log(tx.hash);

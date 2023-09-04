@@ -1,5 +1,5 @@
 export const STAKING_CONTRACT_ADDRESS =
-  "0x8EA318f0C4c172d414bE09f88bD72ce51CaB72a3";
+  "0x846D6811b9CadD58eFc8C1cE723C9D286047A000";
 export const STAKING_ABI = [
   {
     "inputs": [
